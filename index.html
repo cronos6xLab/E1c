@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grit - Tu Mejor Rastreador de Hábitos</title>
+    <style>
+        :root {
+            --bg: #0d0d0f;
+            --bg-card: #16161a;
+            --bg-card-hover: #1e1e24;
+            --text: #e8e8ed;
+            --text-secondary: #a0a0b0;
+            --accent: #ff6b3d;
+            --accent-glow: rgba(255, 107, 61, 0.3);
+            --accent2: #ff9a6c;
+            --green: #4ade80;
+            --green-glow: rgba(74, 222, 128, 0.25);
+            --blue: #60a5fa;
+            --purple: #c084fc;
+            --yellow: #fbbf24;
+            --pink: #f472b6;
+            --teal: #2dd4bf;
+            --border: #2a2a32;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --radius-lg: 28px;
+            --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 60px rgba(255, 107, 61, 0.15);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .light-mode {
+            --bg: #f5f5f7;
+            --bg-card: #ffffff;
+            --bg-card-hover: #fafafa;
+            --text: #1a1a2e;
+            --text-secondary: #5a5a6e;
+            --border: #e5e5ea;
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 60px rgba(255, 107, 61, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'SF Pro Display', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Animated background ── */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+            transition: all 1.5s ease;
+        }
+        .bg-orb--1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: -15%;
+            right: -10%;
+            animation: floatOrb1 18s ease-in-out infinite;
+        }
+        .bg-orb--2 {
+            width: 380px;
+            height: 380px;
+            background: #7c3aed;
+            bottom: -12%;
+            left: -8%;
+            animation: floatOrb2 22s ease-in-out infinite;
+        }
+        .bg-orb--3 {
+            width: 300px;
+            height: 300px;
+            background: var(--teal);
+            top: 50%;
+            left: 55%;
+            animation: floatOrb3 20s ease-in-out infinite;
+        }
+
+        @keyframes floatOrb1 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(-60px, 40px) scale(1.15);
+            }
+            50% {
+                transform: translate(30px, -30px) scale(0.9);
+            }
+            75% {
+                transform: translate(-40px, -50px) scale(1.08);
+            }
+        }
+        @keyframes floatOrb2 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(50px, -35px) scale(1.12);
+            }
+            66% {
+                transform: translate(-25px, 40px) scale(0.88);
+            }
+        }
+        @keyframes floatOrb3 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            30% {
+                transform: translate(-45px, -25px) scale(1.1);
+            }
+            60% {
+                transform: translate(35px, 20px) scale(0.92);
+            }
+        }
+
+        /* ── Layout ── */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s ease;
+        }
+        .navbar.scrolled {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            border-radius: 0 0 24px 24px;
+            margin: 0 -16px;
+            padding: 14px 16px;
+        }
+        .light-mode .navbar.scrolled {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.4px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #ff3d00);
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .btn-theme {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .btn-theme:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .btn-download-sm {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: -0.2px;
+            white-space: nowrap;
+        }
+        .btn-download-sm:hover {
+            background: #ff8159;
+            box-shadow: 0 6px 28px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 70px 0 40px;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            letter-spacing: 0.2px;
+            animation: fadeInUp 0.7s ease forwards;
+        }
+        .hero-badge span {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .hero h1 {
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.7s 0.1s ease forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 36px;
+            animation: fadeInUp 0.7s 0.2s ease forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.7s 0.3s ease forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        .btn-primary {
+            padding: 16px 36px;
+            border-radius: 50px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: -0.3px;
+            box-shadow: 0 8px 32px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:hover {
+            background: #ff8159;
+            box-shadow: 0 12px 40px rgba(255, 107, 61, 0.45);
+            transform: translateY(-3px);
+        }
+        .btn-secondary {
+            padding: 16px 36px;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: -0.3px;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ── Phone mockup ── */
+        .mockup-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0 50px;
+            animation: fadeInUp 0.8s 0.4s ease forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        .phone-mockup {
+            width: 280px;
+            height: 560px;
+            background: var(--bg-card);
+            border-radius: 36px;
+            border: 4px solid #2a2a35;
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .light-mode .phone-mockup {
+            border-color: #d5d5dc;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 26px;
+            background: #1a1a20;
+            border-radius: 0 0 18px 18px;
+            z-index: 2;
+        }
+        .light-mode .phone-notch {
+            background: #e0e0e5;
+        }
+        .phone-screen {
+            padding: 48px 18px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+        .phone-header {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            color: var(--text);
+        }
+        .habit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg);
+            border-radius: 14px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: default;
+        }
+        .habit-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .habit-dot--green {
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green-glow);
+        }
+        .habit-dot--orange {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        .habit-dot--blue {
+            background: var(--blue);
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+        }
+        .habit-dot--purple {
+            background: var(--purple);
+            box-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
+        }
+        .habit-check {
+            margin-left: auto;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #000;
+            font-weight: 700;
+        }
+        .habit-streak {
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-left: 4px;
+        }
+        .phone-progress {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 4px;
+        }
+        .phone-progress-bar {
+            height: 6px;
+            background: #2a2a35;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .phone-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            width: 68%;
+            animation: progressPulse 2s ease-in-out infinite;
+        }
+        @keyframes progressPulse {
+            0%,
+            100% {
+                width: 68%;
+            }
+            50% {
+                width: 72%;
+            }
+        }
+
+        /* ── Features Grid ── */
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            font-size: 1.05rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding-bottom: 60px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            transition: var(--transition);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: #444;
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        }
+        .light-mode .feature-card:hover {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+            border-color: #ccc;
+        }
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .feature-card:hover::after {
+            opacity: 0.06;
+        }
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.08);
+        }
+        .fi-orange {
+            background: rgba(255, 107, 61, 0.15);
+            color: var(--accent);
+        }
+        .fi-green {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--green);
+        }
+        .fi-blue {
+            background: rgba(96, 165, 250, 0.15);
+            color: var(--blue);
+        }
+        .fi-purple {
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--purple);
+        }
+        .fi-yellow {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--yellow);
+        }
+        .fi-pink {
+            background: rgba(244, 114, 182, 0.15);
+            color: var(--pink);
+        }
+        .fi-teal {
+            background: rgba(45, 212, 191, 0.15);
+            color: var(--teal);
+        }
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            text-align: center;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+        .cta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 50px 30px;
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-card h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            margin-bottom: 12px;
+        }
+        .cta-card p {
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-size: 1.05rem;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a45;
+            border-radius: 10px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .phone-mockup {
+                width: 220px;
+                height: 440px;
+                border-radius: 28px;
+            }
+            .phone-screen {
+                padding: 38px 12px 16px;
+                gap: 8px;
+            }
+            .habit-row {
+                font-size: 0.7rem;
+                padding: 8px 10px;
+            }
+            .navbar {
+                padding: 12px 0;
+            }
+            .btn-download-sm {
+                padding: 8px 14px;
+                font-size: 0.78rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 14px;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-actions {
+                gap: 8px;
+            }
+            .logo {
+                font-size: 1.2rem;
+            }
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background orbs -->
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+            <a href="#" class="logo">
+                <div class="logo-icon">🔥</div>
+                Grit
+            </a>
+            <div class="nav-actions">
+                <button class="btn-theme" id="btnTheme" aria-label="Cambiar modo" title="Cambiar modo claro/oscuro">🌙</button>
+                <button class="btn-download-sm">Descargar</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero container">
+        <div class="hero-badge">✨ <span>Nuevo:</span> Temporizador incorporado y Atajos de Siri</div>
+        <h1>Potencía tus hábitos<br>con <span class="highlight">Grit</span></h1>
+        <p class="hero-subtitle">
+            Construye buenos hábitos, elimina los malos. Logra metas con Grit, el rastreador de hábitos completo para tu día a día.
+        </p>
+        <div class="hero-buttons">
+            <button class="btn-primary">
+                <span>📱</span> Descárgalo ahora
+            </button>
+            <button class="btn-secondary">Conocer más →</button>
+        </div>
+    </section>
+
+    <!-- Phone Mockup -->
+    <div class="mockup-wrapper">
+        <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+                <div class="phone-header">📅 Hoy</div>
+                <div class="habit-row">
+                    <div class="habit-dot habit-dot--green"></div> Meditación matutina
+                    <span class="habit-streak">🔥7</span>
+                    <div class="habit-check">✓</div>
+                </div>
+                <div class="habit-row">
+                    <div class="habit-dot habit-dot--orange"></div> Leer 30 minutos
+                    <span class="habit-streak">🔥12</span>
+                    <div class="habit-check">✓</div>
+                </div>
+                <div class="habit-row">
+                    <div class="habit-dot habit-dot--blue"></div> Beber 2L de agua
+                    <span class="habit-streak">🔥3</span>
+                </div>
+                <div class="habit-row">
+                    <div class="habit-dot habit-dot--purple"></div> Ejercicio
+                    <span class="habit-streak">🔥21</span>
+                    <div class="habit-check">✓</div>
+                </div>
+                <div class="phone-progress">
+                    <strong style="font-size:0.8rem;">🏆 Progreso semanal</strong>
+                    <div class="phone-progress-bar">
+                        <div class="phone-progress-fill"></div>
+                    </div>
+                    <span style="font-size:0.7rem;color:var(--text-secondary);">68% completado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <section class="container" id="features">
+        <h2 class="section-title fade-in">Todo lo que necesitas</h2>
+        <p class="section-subtitle fade-in">Grit está repleto de funciones pensadas para ti.</p>
+        <div class="features-grid">
+            <!-- 1. Logros -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-yellow">🏆</div>
+                <h3>Logros</h3>
+                <p>Desbloquea hitos mientras mantienes una racha. Celebra cada paso hacia tu mejor versión con insignias y recompensas motivadoras.</p>
+            </div>
+            <!-- 2. Apple Health -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-pink">❤️</div>
+                <h3>Integración con Apple Health</h3>
+                <p>Seguimiento sin problemas con sincronización automática. Tus datos de salud se integran perfectamente con tus hábitos diarios.</p>
+            </div>
+            <!-- 3. Recordatorios Inteligentes -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-blue">🔔</div>
+                <h3>Recordatorios Inteligentes</h3>
+                <p>Mantente en camino con notificaciones inteligentes que se adaptan a tu rutina y te avisan justo cuando lo necesitas.</p>
+            </div>
+            <!-- 4. Estadísticas Útiles -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-green">📊</div>
+                <h3>Estadísticas Útiles</h3>
+                <p>Obtén insights detallados y mantente motivado con gráficos claros que muestran tu evolución a lo largo del tiempo.</p>
+            </div>
+            <!-- 5. Widgets -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-purple">🧩</div>
+                <h3>Widgets</h3>
+                <p>Sigue el progreso de un vistazo desde tu pantalla de inicio. Completa hábitos sin abrir la aplicación.</p>
+            </div>
+            <!-- 6. Modo Oscuro -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-orange">🌓</div>
+                <h3>Modo Oscuro y Personalización</h3>
+                <p>Personaliza tu experiencia con modo oscuro, temas de color y una interfaz que se adapta a tu estilo visual.</p>
+            </div>
+            <!-- 7. Temporizador -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-teal">⏱️</div>
+                <h3>Temporizador Incorporado</h3>
+                <p>Gestiona hábitos basados en el tiempo eficazmente. Ideal para meditación, lectura, ejercicio y más.</p>
+            </div>
+            <!-- 8. iCloud -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-blue">☁️</div>
+                <h3>Soporte iCloud</h3>
+                <p>Mantén tus hábitos sincronizados en todos tus dispositivos. Nunca pierdas tu progreso estés donde estés.</p>
+            </div>
+            <!-- 9. Grupos de Hábitos -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-green">📁</div>
+                <h3>Grupos de Hábitos</h3>
+                <p>Organiza y sigue hábitos relacionados juntos. Crea rutinas matutinas, de trabajo o bienestar en un solo lugar.</p>
+            </div>
+            <!-- 10. Atajos de Siri -->
+            <div class="feature-card fade-in">
+                <div class="feature-icon fi-purple">🎙️</div>
+                <h3>Atajos de Siri</h3>
+                <p>Crea comandos personalizados de Siri para registrar tus hábitos con solo tu voz. Rápido, fácil y manos libres.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section container">
+        <div class="cta-card fade-in">
+            <h2>🚀 Comienza tu camino hoy</h2>
+            <p>Descarga Grit gratis y transforma tus hábitos paso a paso.</p>
+            <button class="btn-primary" style="margin:0 auto;display:inline-flex;">
+                <span>📱</span> Descárgalo ahora — Es gratis
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Grit App. Hecho con ❤️ para ayudarte a crecer. | Compatible con iOS · iPadOS · watchOS</p>
+        </div>
+    </footer>
+
+    <script>
+        // ── Theme Toggle ──
+        const btnTheme = document.getElementById('btnTheme');
+        const body = document.body;
+        let isDark = true;
+
+        btnTheme.addEventListener('click', () => {
+            isDark = !isDark;
+            if (isDark) {
+                body.classList.remove('light-mode');
+                btnTheme.textContent = '🌙';
+                localStorage.setItem('grit-theme', 'dark');
+            } else {
+                body.classList.add('light-mode');
+                btnTheme.textContent = '☀️';
+                localStorage.setItem('grit-theme', 'light');
+            }
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('grit-theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            btnTheme.textContent = '☀️';
+            isDark = false;
+        }
+
+        // ── Navbar scroll effect ──
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ── Scroll reveal ──
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // ── Smooth scroll for CTA buttons ──
+        document.querySelectorAll('.btn-primary, .btn-download-sm').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Scroll to top with smooth animation
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Pulse effect
+                btn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    btn.style.transform = '';
+                }, 150);
+                // Show a little toast-like feedback
+                showToast('🎉 ¡Gracias por tu interés en Grit!');
+            });
+        });
+
+        document.querySelector('.btn-secondary')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ── Simple toast ──
+        function showToast(message) {
+            const existing = document.querySelector('.grit-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'grit-toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                        position: fixed;
+                        bottom: 30px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: var(--bg-card);
+                        color: var(--text);
+                        border: 1px solid var(--border);
+                        padding: 14px 28px;
+                        border-radius: 50px;
+                        font-weight: 600;
+                        font-size: 0.95rem;
+                        z-index: 9999;
+                        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+                        animation: toastIn 0.4s ease, toastOut 0.4s 2.2s ease forwards;
+                        pointer-events: none;
+                        letter-spacing: -0.2px;
+                    `;
+            document.body.appendChild(toast);
+
+            // Add keyframes dynamically if not present
+            if (!document.getElementById('toast-styles')) {
+                const styleTag = document.createElement('style');
+                styleTag.id = 'toast-styles';
+                styleTag.textContent = `
+                            @keyframes toastIn {
+                                from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+                            }
+                            @keyframes toastOut {
+                                from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                                to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                            }
+                        `;
+                document.head.appendChild(styleTag);
+            }
+
+            setTimeout(() => toast.remove(), 2700);
+        }
+    </script>
+</body>
+</html>
