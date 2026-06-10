@@ -2,983 +2,1207 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grit - Tu Mejor Rastreador de Hábitos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grit - Rastreador de Hábitos</title>
     <style>
         :root {
             --bg: #0d0d0f;
             --bg-card: #16161a;
-            --bg-card-hover: #1e1e24;
+            --bg-input: #1c1c22;
             --text: #e8e8ed;
             --text-secondary: #a0a0b0;
             --accent: #ff6b3d;
-            --accent-glow: rgba(255, 107, 61, 0.3);
-            --accent2: #ff9a6c;
+            --accent-glow: rgba(255, 107, 61, 0.35);
             --green: #4ade80;
-            --green-glow: rgba(74, 222, 128, 0.25);
+            --green-bg: rgba(74, 222, 128, 0.12);
+            --red: #f87171;
             --blue: #60a5fa;
             --purple: #c084fc;
             --yellow: #fbbf24;
-            --pink: #f472b6;
             --teal: #2dd4bf;
-            --border: #2a2a32;
-            --radius: 20px;
-            --radius-sm: 12px;
-            --radius-lg: 28px;
-            --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 60px rgba(255, 107, 61, 0.15);
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --pink: #f472b6;
+            --border: #2a2a35;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --nav-height: 70px;
+            --safe-bottom: env(safe-area-inset-bottom, 12px);
         }
-
         .light-mode {
-            --bg: #f5f5f7;
+            --bg: #f2f2f7;
             --bg-card: #ffffff;
-            --bg-card-hover: #fafafa;
+            --bg-input: #eaeaef;
             --text: #1a1a2e;
             --text-secondary: #5a5a6e;
-            --border: #e5e5ea;
-            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
-            --shadow-glow: 0 0 60px rgba(255, 107, 61, 0.08);
+            --border: #dcdce0;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'SF Pro Display', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
+            font-family: 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
-            transition: background-color 0.4s ease, color 0.4s ease;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 0.4s, color 0.4s;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
-
-        /* ── Animated background ── */
-        .bg-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 0;
-            transition: all 1.5s ease;
-        }
-        .bg-orb--1 {
-            width: 500px;
-            height: 500px;
-            background: var(--accent);
-            top: -15%;
-            right: -10%;
-            animation: floatOrb1 18s ease-in-out infinite;
-        }
-        .bg-orb--2 {
-            width: 380px;
-            height: 380px;
-            background: #7c3aed;
-            bottom: -12%;
-            left: -8%;
-            animation: floatOrb2 22s ease-in-out infinite;
-        }
-        .bg-orb--3 {
-            width: 300px;
-            height: 300px;
-            background: var(--teal);
-            top: 50%;
-            left: 55%;
-            animation: floatOrb3 20s ease-in-out infinite;
-        }
-
-        @keyframes floatOrb1 {
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(-60px, 40px) scale(1.15);
-            }
-            50% {
-                transform: translate(30px, -30px) scale(0.9);
-            }
-            75% {
-                transform: translate(-40px, -50px) scale(1.08);
-            }
-        }
-        @keyframes floatOrb2 {
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(50px, -35px) scale(1.12);
-            }
-            66% {
-                transform: translate(-25px, 40px) scale(0.88);
-            }
-        }
-        @keyframes floatOrb3 {
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-            30% {
-                transform: translate(-45px, -25px) scale(1.1);
-            }
-            60% {
-                transform: translate(35px, 20px) scale(0.92);
-            }
-        }
-
-        /* ── Layout ── */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 28px;
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            height: 100dvh;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px var(--border);
+        }
+        @media (min-width: 420px) {
+            .app-container {
+                border-radius: 28px;
+                height: 92vh;
+                height: 92dvh;
+                max-height: 880px;
+            }
         }
 
-        /* ── Navbar ── */
-        .navbar {
+        /* Header */
+        .app-header {
+            padding: 16px 20px 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: transparent;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid transparent;
-            transition: all 0.4s ease;
+            flex-shrink: 0;
+            z-index: 10;
         }
-        .navbar.scrolled {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-            border-radius: 0 0 24px 24px;
-            margin: 0 -16px;
-            padding: 14px 16px;
-        }
-        .light-mode .navbar.scrolled {
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
+        .app-header h2 {
             font-size: 1.5rem;
-            letter-spacing: -0.4px;
-            color: var(--text);
-            text-decoration: none;
-        }
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), #ff3d00);
-            border-radius: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 4px 16px var(--accent-glow);
-        }
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .btn-theme {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 1.5px solid var(--border);
-            background: var(--bg-card);
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            color: var(--text);
-        }
-        .btn-theme:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        .btn-download-sm {
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: -0.2px;
-            white-space: nowrap;
-        }
-        .btn-download-sm:hover {
-            background: #ff8159;
-            box-shadow: 0 6px 28px var(--accent-glow);
-            transform: translateY(-1px);
-        }
-
-        /* ── Hero ── */
-        .hero {
-            text-align: center;
-            padding: 70px 0 40px;
-            position: relative;
-        }
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-            letter-spacing: 0.2px;
-            animation: fadeInUp 0.7s ease forwards;
-        }
-        .hero-badge span {
-            color: var(--accent);
-            font-weight: 700;
-        }
-        .hero h1 {
-            font-size: clamp(2.6rem, 6vw, 4.2rem);
             font-weight: 800;
-            letter-spacing: -1.5px;
-            line-height: 1.1;
-            margin-bottom: 16px;
-            animation: fadeInUp 0.7s 0.1s ease forwards;
-            opacity: 0;
-            animation-fill-mode: forwards;
+            letter-spacing: -0.5px;
         }
-        .hero h1 .highlight {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 36px;
-            animation: fadeInUp 0.7s 0.2s ease forwards;
-            opacity: 0;
-            animation-fill-mode: forwards;
-        }
-        .hero-buttons {
+        .header-actions {
             display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.7s 0.3s ease forwards;
-            opacity: 0;
-            animation-fill-mode: forwards;
+            gap: 8px;
         }
-        .btn-primary {
-            padding: 16px 36px;
-            border-radius: 50px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: -0.3px;
-            box-shadow: 0 8px 32px var(--accent-glow);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-primary:hover {
-            background: #ff8159;
-            box-shadow: 0 12px 40px rgba(255, 107, 61, 0.45);
-            transform: translateY(-3px);
-        }
-        .btn-secondary {
-            padding: 16px 36px;
-            border-radius: 50px;
-            border: 2px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: -0.3px;
-        }
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            background: var(--bg-card-hover);
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
-        }
-
-        /* ── Phone mockup ── */
-        .mockup-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 20px 0 50px;
-            animation: fadeInUp 0.8s 0.4s ease forwards;
-            opacity: 0;
-            animation-fill-mode: forwards;
-        }
-        .phone-mockup {
-            width: 280px;
-            height: 560px;
-            background: var(--bg-card);
-            border-radius: 36px;
-            border: 4px solid #2a2a35;
-            box-shadow: var(--shadow-card), var(--shadow-glow);
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-        .light-mode .phone-mockup {
-            border-color: #d5d5dc;
-        }
-        .phone-notch {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 26px;
-            background: #1a1a20;
-            border-radius: 0 0 18px 18px;
-            z-index: 2;
-        }
-        .light-mode .phone-notch {
-            background: #e0e0e5;
-        }
-        .phone-screen {
-            padding: 48px 18px 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            overflow-y: auto;
-        }
-        .phone-header {
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-align: center;
-            color: var(--text);
-        }
-        .habit-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: var(--bg);
-            border-radius: 14px;
-            font-size: 0.82rem;
-            font-weight: 500;
-            transition: var(--transition);
-            cursor: default;
-        }
-        .habit-dot {
-            width: 10px;
-            height: 10px;
+        .icon-btn {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--text);
             flex-shrink: 0;
         }
-        .habit-dot--green {
-            background: var(--green);
-            box-shadow: 0 0 10px var(--green-glow);
-        }
-        .habit-dot--orange {
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-        .habit-dot--blue {
-            background: var(--blue);
-            box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
-        }
-        .habit-dot--purple {
-            background: var(--purple);
-            box-shadow: 0 0 10px rgba(192, 132, 252, 0.3);
-        }
-        .habit-check {
-            margin-left: auto;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: #000;
-            font-weight: 700;
-        }
-        .habit-streak {
-            font-size: 0.7rem;
-            color: var(--accent);
-            font-weight: 700;
-            margin-left: 4px;
-        }
-        .phone-progress {
-            background: var(--bg);
-            border-radius: 14px;
-            padding: 14px;
-            margin-top: 4px;
-        }
-        .phone-progress-bar {
-            height: 6px;
-            background: #2a2a35;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .phone-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent2));
-            border-radius: 10px;
-            width: 68%;
-            animation: progressPulse 2s ease-in-out infinite;
-        }
-        @keyframes progressPulse {
-            0%,
-            100% {
-                width: 68%;
-            }
-            50% {
-                width: 72%;
-            }
+        .icon-btn:active {
+            transform: scale(0.92);
+            background: var(--bg-input);
         }
 
-        /* ── Features Grid ── */
-        .section-title {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: -0.8px;
-            margin-bottom: 8px;
+        /* Main content */
+        .app-main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 10px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            margin-bottom: 48px;
-            font-size: 1.05rem;
+        .app-main::-webkit-scrollbar {
+            width: 3px;
         }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding-bottom: 60px;
-        }
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 28px 24px;
-            transition: var(--transition);
-            cursor: default;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
-        }
-        .feature-card:hover {
-            background: var(--bg-card-hover);
-            border-color: #444;
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-        }
-        .light-mode .feature-card:hover {
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-            border-color: #ccc;
-        }
-        .feature-card::after {
-            content: '';
-            position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-        }
-        .feature-card:hover::after {
-            opacity: 0.06;
-        }
-        .feature-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            margin-bottom: 16px;
-            transition: var(--transition);
-        }
-        .feature-card:hover .feature-icon {
-            transform: scale(1.08);
-        }
-        .fi-orange {
-            background: rgba(255, 107, 61, 0.15);
-            color: var(--accent);
-        }
-        .fi-green {
-            background: rgba(74, 222, 128, 0.15);
-            color: var(--green);
-        }
-        .fi-blue {
-            background: rgba(96, 165, 250, 0.15);
-            color: var(--blue);
-        }
-        .fi-purple {
-            background: rgba(192, 132, 252, 0.15);
-            color: var(--purple);
-        }
-        .fi-yellow {
-            background: rgba(251, 191, 36, 0.15);
-            color: var(--yellow);
-        }
-        .fi-pink {
-            background: rgba(244, 114, 182, 0.15);
-            color: var(--pink);
-        }
-        .fi-teal {
-            background: rgba(45, 212, 191, 0.15);
-            color: var(--teal);
-        }
-        .feature-card h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.3px;
-        }
-        .feature-card p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* ── CTA ── */
-        .cta-section {
-            text-align: center;
-            padding: 60px 0 80px;
-            position: relative;
-        }
-        .cta-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 50px 30px;
-            box-shadow: var(--shadow-card), var(--shadow-glow);
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-card h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.6px;
-            margin-bottom: 12px;
-        }
-        .cta-card p {
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            font-size: 1.05rem;
-        }
-
-        /* ── Footer ── */
-        .footer {
-            text-align: center;
-            padding: 30px 0;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-        }
-
-        /* ── Animations ── */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ── Scrollbar ── */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
+        .app-main::-webkit-scrollbar-thumb {
             background: #3a3a45;
             border-radius: 10px;
         }
 
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            .phone-mockup {
-                width: 220px;
-                height: 440px;
-                border-radius: 28px;
-            }
-            .phone-screen {
-                padding: 38px 12px 16px;
-                gap: 8px;
-            }
-            .habit-row {
-                font-size: 0.7rem;
-                padding: 8px 10px;
-            }
-            .navbar {
-                padding: 12px 0;
-            }
-            .btn-download-sm {
-                padding: 8px 14px;
-                font-size: 0.78rem;
+        /* Tabs */
+        .tabs-row {
+            display: flex;
+            gap: 6px;
+            padding: 4px 0 16px;
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tabs-row::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-chip {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            white-space: nowrap;
+            transition: var(--transition);
+            letter-spacing: -0.2px;
+        }
+        .tab-chip.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        /* Habit card */
+        .habit-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .habit-card:active {
+            transform: scale(0.985);
+            background: var(--bg-input);
+        }
+        .habit-checkbox {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 0.75rem;
+            color: transparent;
+        }
+        .habit-checkbox.done {
+            background: var(--green);
+            border-color: var(--green);
+            color: #000;
+            font-weight: 700;
+        }
+        .habit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .habit-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: -0.3px;
+        }
+        .habit-meta {
+            font-size: 0.73rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 2px;
+        }
+        .habit-streak-badge {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.73rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .habit-group-tag {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 50px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .habit-timer-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .habit-timer-btn:active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .habit-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: var(--transition);
+            color: var(--red);
+        }
+        .habit-card:hover .habit-delete {
+            opacity: 1;
+        }
+        @media (hover: none) {
+            .habit-delete {
+                opacity: 0.7;
             }
         }
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 14px;
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 14px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .stat-accent {
+            color: var(--accent);
+        }
+        .stat-green {
+            color: var(--green);
+        }
+        .stat-purple {
+            color: var(--purple);
+        }
+
+        /* Achievements */
+        .achievement-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+        .achievement-card.unlocked {
+            opacity: 1;
+            border-color: var(--yellow);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+        }
+        .achievement-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        .achievement-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .achievement-info p {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Timer modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px 24px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            margin: 16px 0;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            letter-spacing: -0.3px;
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .btn-accent:active {
+            transform: scale(0.95);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        /* Add habit form */
+        .form-group {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Bottom nav */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 8px var(--safe-bottom);
+            border-top: 1px solid var(--border);
+            background: var(--bg);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: var(--transition);
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 200;
+            pointer-events: none;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            animation: toastIn 0.35s ease, toastOut 0.35s 1.8s ease forwards;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(15px);
             }
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                justify-content: center;
+        }
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
-            .nav-actions {
-                gap: 8px;
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-8px);
             }
-            .logo {
-                font-size: 1.2rem;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
-            .logo-icon {
-                width: 32px;
-                height: 32px;
-                border-radius: 8px;
-                font-size: 1.1rem;
+            to {
+                opacity: 1;
             }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .view {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+        .view.active {
+            display: flex;
         }
     </style>
 </head>
 <body>
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <header class="app-header" id="appHeader">
+            <h2 id="headerTitle">🔥 Grit</h2>
+            <div class="header-actions">
+                <button class="icon-btn" id="btnTheme" title="Modo oscuro/claro">🌙</button>
+                <button class="icon-btn" id="btnAddHabit" title="Añadir hábito">＋</button>
+            </div>
+        </header>
 
-    <!-- Background orbs -->
-    <div class="bg-orb bg-orb--1"></div>
-    <div class="bg-orb bg-orb--2"></div>
-    <div class="bg-orb bg-orb--3"></div>
+        <!-- Views -->
+        <!-- Dashboard View -->
+        <div class="view active" id="viewDashboard">
+            <div class="tabs-row" id="groupTabs">
+                <span class="tab-chip active" data-group="all">Todos</span>
+            </div>
+            <div class="app-main" id="habitList"></div>
+        </div>
 
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
-            <a href="#" class="logo">
-                <div class="logo-icon">🔥</div>
-                Grit
-            </a>
-            <div class="nav-actions">
-                <button class="btn-theme" id="btnTheme" aria-label="Cambiar modo" title="Cambiar modo claro/oscuro">🌙</button>
-                <button class="btn-download-sm">Descargar</button>
+        <!-- Stats View -->
+        <div class="view" id="viewStats">
+            <div class="app-main">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value stat-accent" id="statStreak">0</div><div class="stat-label">🔥 Mejor racha</div></div>
+                    <div class="stat-card"><div class="stat-value stat-green" id="statToday">0</div><div class="stat-label">✅ Hoy</div></div>
+                    <div class="stat-card"><div class="stat-value stat-purple" id="statTotal">0</div><div class="stat-label">📋 Total hábitos</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statCompletions">0</div><div class="stat-label">🏆 Completados</div></div>
+                </div>
+                <h4 style="margin-bottom:10px;">🏅 Logros</h4>
+                <div id="achievementsList"></div>
             </div>
         </div>
-    </nav>
 
-    <!-- Hero -->
-    <section class="hero container">
-        <div class="hero-badge">✨ <span>Nuevo:</span> Temporizador incorporado y Atajos de Siri</div>
-        <h1>Potencía tus hábitos<br>con <span class="highlight">Grit</span></h1>
-        <p class="hero-subtitle">
-            Construye buenos hábitos, elimina los malos. Logra metas con Grit, el rastreador de hábitos completo para tu día a día.
-        </p>
-        <div class="hero-buttons">
-            <button class="btn-primary">
-                <span>📱</span> Descárgalo ahora
-            </button>
-            <button class="btn-secondary">Conocer más →</button>
-        </div>
-    </section>
-
-    <!-- Phone Mockup -->
-    <div class="mockup-wrapper">
-        <div class="phone-mockup">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-                <div class="phone-header">📅 Hoy</div>
-                <div class="habit-row">
-                    <div class="habit-dot habit-dot--green"></div> Meditación matutina
-                    <span class="habit-streak">🔥7</span>
-                    <div class="habit-check">✓</div>
-                </div>
-                <div class="habit-row">
-                    <div class="habit-dot habit-dot--orange"></div> Leer 30 minutos
-                    <span class="habit-streak">🔥12</span>
-                    <div class="habit-check">✓</div>
-                </div>
-                <div class="habit-row">
-                    <div class="habit-dot habit-dot--blue"></div> Beber 2L de agua
-                    <span class="habit-streak">🔥3</span>
-                </div>
-                <div class="habit-row">
-                    <div class="habit-dot habit-dot--purple"></div> Ejercicio
-                    <span class="habit-streak">🔥21</span>
-                    <div class="habit-check">✓</div>
-                </div>
-                <div class="phone-progress">
-                    <strong style="font-size:0.8rem;">🏆 Progreso semanal</strong>
-                    <div class="phone-progress-bar">
-                        <div class="phone-progress-fill"></div>
+        <!-- Settings / Groups View -->
+        <div class="view" id="viewSettings">
+            <div class="app-main">
+                <h4 style="margin-bottom:12px;">📁 Grupos de hábitos</h4>
+                <div id="groupsList" style="margin-bottom:20px;"></div>
+                <div class="form-group">
+                    <label>Crear nuevo grupo</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="newGroupInput" placeholder="Nombre del grupo" style="flex:1;">
+                        <button class="btn btn-accent" id="btnCreateGroup" style="padding:10px 16px;">Crear</button>
                     </div>
-                    <span style="font-size:0.7rem;color:var(--text-secondary);">68% completado</span>
                 </div>
+                <hr style="border-color:var(--border);margin:20px 0;">
+                <p style="font-size:0.75rem;color:var(--text-secondary);">💡 Los datos se guardan localmente en tu navegador (como iCloud).</p>
+                <p style="font-size:0.75rem;color:var(--text-secondary);">🎙️ Atajos de Siri simulados: puedes usar comandos de voz con el botón del micrófono.</p>
+                <button class="btn btn-outline" id="btnVoice" style="margin-top:12px;width:100%;">🎙️ Probar comando de voz</button>
+                <button class="btn btn-ghost" id="btnReset" style="margin-top:8px;width:100%;color:var(--red);">🗑️ Reiniciar todos los datos</button>
+            </div>
+        </div>
+
+        <!-- Bottom nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="viewDashboard"><span class="nav-icon">🏠</span> Hoy</button>
+            <button class="nav-item" data-view="viewStats"><span class="nav-icon">📊</span> Estadísticas</button>
+            <button class="nav-item" data-view="viewSettings"><span class="nav-icon">⚙️</span> Más</button>
+        </nav>
+    </div>
+
+    <!-- Timer Modal -->
+    <div class="modal-overlay hidden" id="timerModal">
+        <div class="modal">
+            <h3>⏱️ Temporizador</h3>
+            <p id="timerHabitName" style="color:var(--text-secondary);"></p>
+            <div class="timer-display" id="timerDisplay">05:00</div>
+            <input type="range" id="timerSlider" min="1" max="120" value="5" style="width:100%;margin-bottom:12px;">
+            <div class="timer-controls">
+                <button class="btn btn-accent" id="btnTimerStart">▶ Iniciar</button>
+                <button class="btn btn-outline" id="btnTimerPause">⏸ Pausar</button>
+                <button class="btn btn-ghost" id="btnTimerReset">↺</button>
+            </div>
+            <button class="btn btn-ghost" id="btnTimerClose" style="margin-top:12px;">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Add Habit Modal -->
+    <div class="modal-overlay hidden" id="addHabitModal">
+        <div class="modal">
+            <h3>✨ Nuevo hábito</h3>
+            <div class="form-group">
+                <label>Nombre del hábito</label>
+                <input type="text" id="habitNameInput" placeholder="Ej: Meditar 10 min">
+            </div>
+            <div class="form-group">
+                <label>Grupo</label>
+                <select id="habitGroupSelect"></select>
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <select id="habitColorSelect">
+                    <option value="orange">🟠 Naranja</option>
+                    <option value="green">🟢 Verde</option>
+                    <option value="blue">🔵 Azul</option>
+                    <option value="purple">🟣 Púrpura</option>
+                    <option value="pink">🩷 Rosa</option>
+                    <option value="teal">🩵 Teal</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-accent" id="btnSaveHabit" style="flex:1;">Guardar</button>
+                <button class="btn btn-ghost" id="btnCancelHabit">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- Features -->
-    <section class="container" id="features">
-        <h2 class="section-title fade-in">Todo lo que necesitas</h2>
-        <p class="section-subtitle fade-in">Grit está repleto de funciones pensadas para ti.</p>
-        <div class="features-grid">
-            <!-- 1. Logros -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-yellow">🏆</div>
-                <h3>Logros</h3>
-                <p>Desbloquea hitos mientras mantienes una racha. Celebra cada paso hacia tu mejor versión con insignias y recompensas motivadoras.</p>
-            </div>
-            <!-- 2. Apple Health -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-pink">❤️</div>
-                <h3>Integración con Apple Health</h3>
-                <p>Seguimiento sin problemas con sincronización automática. Tus datos de salud se integran perfectamente con tus hábitos diarios.</p>
-            </div>
-            <!-- 3. Recordatorios Inteligentes -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-blue">🔔</div>
-                <h3>Recordatorios Inteligentes</h3>
-                <p>Mantente en camino con notificaciones inteligentes que se adaptan a tu rutina y te avisan justo cuando lo necesitas.</p>
-            </div>
-            <!-- 4. Estadísticas Útiles -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-green">📊</div>
-                <h3>Estadísticas Útiles</h3>
-                <p>Obtén insights detallados y mantente motivado con gráficos claros que muestran tu evolución a lo largo del tiempo.</p>
-            </div>
-            <!-- 5. Widgets -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-purple">🧩</div>
-                <h3>Widgets</h3>
-                <p>Sigue el progreso de un vistazo desde tu pantalla de inicio. Completa hábitos sin abrir la aplicación.</p>
-            </div>
-            <!-- 6. Modo Oscuro -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-orange">🌓</div>
-                <h3>Modo Oscuro y Personalización</h3>
-                <p>Personaliza tu experiencia con modo oscuro, temas de color y una interfaz que se adapta a tu estilo visual.</p>
-            </div>
-            <!-- 7. Temporizador -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-teal">⏱️</div>
-                <h3>Temporizador Incorporado</h3>
-                <p>Gestiona hábitos basados en el tiempo eficazmente. Ideal para meditación, lectura, ejercicio y más.</p>
-            </div>
-            <!-- 8. iCloud -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-blue">☁️</div>
-                <h3>Soporte iCloud</h3>
-                <p>Mantén tus hábitos sincronizados en todos tus dispositivos. Nunca pierdas tu progreso estés donde estés.</p>
-            </div>
-            <!-- 9. Grupos de Hábitos -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-green">📁</div>
-                <h3>Grupos de Hábitos</h3>
-                <p>Organiza y sigue hábitos relacionados juntos. Crea rutinas matutinas, de trabajo o bienestar en un solo lugar.</p>
-            </div>
-            <!-- 10. Atajos de Siri -->
-            <div class="feature-card fade-in">
-                <div class="feature-icon fi-purple">🎙️</div>
-                <h3>Atajos de Siri</h3>
-                <p>Crea comandos personalizados de Siri para registrar tus hábitos con solo tu voz. Rápido, fácil y manos libres.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section container">
-        <div class="cta-card fade-in">
-            <h2>🚀 Comienza tu camino hoy</h2>
-            <p>Descarga Grit gratis y transforma tus hábitos paso a paso.</p>
-            <button class="btn-primary" style="margin:0 auto;display:inline-flex;">
-                <span>📱</span> Descárgalo ahora — Es gratis
-            </button>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>© 2026 Grit App. Hecho con ❤️ para ayudarte a crecer. | Compatible con iOS · iPadOS · watchOS</p>
-        </div>
-    </footer>
-
     <script>
-        // ── Theme Toggle ──
-        const btnTheme = document.getElementById('btnTheme');
-        const body = document.body;
-        let isDark = true;
+        (function() {
+            // ── State ──
+            const STORAGE_KEY = 'grit_app_data_v2';
+            let appData = {
+                habits: [], // { id, name, group, color, streak, bestStreak, completedDates, createdAt }
+                groups: ['Bienestar', 'Productividad', 'Salud', 'Ejercicio', 'Aprendizaje'],
+                achievements: {},
+                theme: 'dark',
+            };
+            let currentView = 'viewDashboard';
+            let activeGroup = 'all';
+            let timerInterval = null;
+            let timerSeconds = 300;
+            let timerRunning = false;
+            let timerHabitId = null;
 
-        btnTheme.addEventListener('click', () => {
-            isDark = !isDark;
-            if (isDark) {
-                body.classList.remove('light-mode');
-                btnTheme.textContent = '🌙';
-                localStorage.setItem('grit-theme', 'dark');
-            } else {
-                body.classList.add('light-mode');
-                btnTheme.textContent = '☀️';
-                localStorage.setItem('grit-theme', 'light');
+            // ── Load / Save ──
+            function loadData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        appData = { ...appData, ...parsed };
+                        if (!appData.groups || appData.groups.length === 0) {
+                            appData.groups = ['Bienestar', 'Productividad', 'Salud'];
+                        }
+                    }
+                } catch (e) { /* use defaults */ }
             }
-        });
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('grit-theme');
-        if (savedTheme === 'light') {
-            body.classList.add('light-mode');
-            btnTheme.textContent = '☀️';
-            isDark = false;
-        }
-
-        // ── Navbar scroll effect ──
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 40) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+            function saveData() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+                } catch (e) {}
             }
-        });
 
-        // ── Scroll reveal ──
-        const fadeElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+            function getToday() {
+                return new Date().toISOString().split('T')[0];
+            }
+
+            // ── Habit helpers ──
+            function isCompletedToday(habit) {
+                return habit.completedDates && habit.completedDates.includes(getToday());
+            }
+
+            function toggleHabit(habitId) {
+                const habit = appData.habits.find(h => h.id === habitId);
+                if (!habit) return;
+                const today = getToday();
+                if (!habit.completedDates) habit.completedDates = [];
+                const idx = habit.completedDates.indexOf(today);
+                if (idx >= 0) {
+                    habit.completedDates.splice(idx, 1);
+                    // Recalculate streak
+                    habit.streak = calculateStreak(habit);
+                } else {
+                    habit.completedDates.push(today);
+                    habit.streak = calculateStreak(habit);
+                    if (habit.streak > (habit.bestStreak || 0)) {
+                        habit.bestStreak = habit.streak;
+                    }
+                    checkAchievements();
+                }
+                saveData();
+                renderAll();
+            }
+
+            function calculateStreak(habit) {
+                if (!habit.completedDates || habit.completedDates.length === 0) return 0;
+                const sorted = [...habit.completedDates].sort().reverse();
+                let streak = 0;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let checkDate = new Date(today);
+                // If not completed today, check if completed yesterday to continue streak
+                const todayStr = getToday();
+                if (!sorted.includes(todayStr)) {
+                    // Check yesterday
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const yesterdayStr = yesterday.toISOString().split('T')[0];
+                    if (!sorted.includes(yesterdayStr)) return 0;
+                    checkDate = yesterday;
+                }
+                for (const dateStr of sorted) {
+                    const d = new Date(dateStr + 'T00:00:00');
+                    const diff = Math.round((checkDate - d) / (1000 * 60 * 60 * 24));
+                    if (diff === streak) {
+                        streak++;
+                        checkDate = d;
+                    } else if (diff > streak) {
+                        break;
+                    }
+                }
+                return streak;
+            }
+
+            function deleteHabit(habitId) {
+                appData.habits = appData.habits.filter(h => h.id !== habitId);
+                saveData();
+                renderAll();
+                showToast('🗑️ Hábito eliminado');
+            }
+
+            function addHabit(name, group, color) {
+                const id = Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
+                appData.habits.push({
+                    id,
+                    name,
+                    group: group || 'Sin grupo',
+                    color: color || 'orange',
+                    streak: 0,
+                    bestStreak: 0,
+                    completedDates: [],
+                    createdAt: new Date().toISOString(),
+                });
+                saveData();
+                renderAll();
+            }
+
+            // ── Achievements ──
+            const achievementDefs = [
+                { id: 'first_habit', icon: '🌱', name: 'Primer paso', desc: 'Crea tu primer hábito', check: () =>
+                        appData.habits.length >= 1 },
+                { id: 'streak_3', icon: '🔥', name: 'Racha de 3', desc: 'Alcanza una racha de 3 días', check: () =>
+                        appData.habits.some(h => h.streak >= 3) },
+                { id: 'streak_7', icon: '⭐', name: 'Racha de 7', desc: 'Alcanza una racha de 7 días', check: () =>
+                        appData.habits.some(h => h.streak >= 7) },
+                { id: 'streak_30', icon: '🏆', name: 'Leyenda', desc: 'Alcanza una racha de 30 días', check: () =>
+                        appData.habits.some(h => h.streak >= 30) },
+                { id: 'five_habits', icon: '📋', name: 'Coleccionista', desc: 'Crea 5 hábitos', check: () => appData.habits
+                        .length >= 5 },
+                { id: 'ten_completions', icon: '💯', name: 'Centenario', desc: '100 completaciones totales', check: () => {
+                        let total = 0;
+                        appData.habits.forEach(h => total += (h.completedDates || []).length);
+                        return total >= 100;
+                    } },
+                { id: 'three_groups', icon: '📁', name: 'Organizador', desc: 'Usa 3 grupos diferentes', check: () => {
+                        const groups = new Set(appData.habits.map(h => h.group));
+                        return groups.size >= 3;
+                    } },
+            ];
+
+            function checkAchievements() {
+                achievementDefs.forEach(def => {
+                    if (!appData.achievements[def.id] && def.check()) {
+                        appData.achievements[def.id] = true;
+                        showToast(`${def.icon} ¡Logro desbloqueado: ${def.name}!`);
+                    }
+                });
+                saveData();
+            }
+
+            // ── Render ──
+            function renderAll() {
+                renderGroupTabs();
+                renderHabitList();
+                renderStats();
+                renderAchievements();
+                renderGroupsList();
+                updateGroupSelect();
+                updateNavActive();
+            }
+
+            function renderGroupTabs() {
+                const container = document.getElementById('groupTabs');
+                const groups = ['all', ...new Set(appData.habits.map(h => h.group).filter(Boolean))];
+                container.innerHTML = groups.map(g =>
+                    `<span class="tab-chip${activeGroup===g?' active':''}" data-group="${g}">${g==='all'?'Todos':g}</span>`
+                ).join('');
+                // Bind clicks
+                container.querySelectorAll('.tab-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        activeGroup = chip.dataset.group;
+                        renderAll();
+                    });
+                });
+            }
+
+            function renderHabitList() {
+                const container = document.getElementById('habitList');
+                let habits = appData.habits;
+                if (activeGroup !== 'all') {
+                    habits = habits.filter(h => h.group === activeGroup);
+                }
+                if (habits.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <p>No hay hábitos aquí. ¡Crea uno nuevo!</p>
+                            <button class="btn btn-accent" id="btnEmptyAdd" style="margin-top:12px;">＋ Añadir hábito</button>
+                        </div>`;
+                    document.getElementById('btnEmptyAdd')?.addEventListener('click', openAddHabitModal);
+                    return;
+                }
+                container.innerHTML = habits.map(h => {
+                    const done = isCompletedToday(h);
+                    const colorMap = {
+                        orange: 'var(--accent)',
+                        green: 'var(--green)',
+                        blue: 'var(--blue)',
+                        purple: 'var(--purple)',
+                        pink: 'var(--pink)',
+                        teal: 'var(--teal)'
+                    };
+                    const dotColor = colorMap[h.color] || 'var(--accent)';
+                    return `
+                    <div class="habit-card" data-id="${h.id}">
+                        <div class="habit-checkbox${done?' done':''}" style="${done?'':'border-color:'+dotColor+';'}" data-action="toggle">${done?'✓':''}</div>
+                        <div class="habit-info">
+                            <div class="habit-name">${escapeHtml(h.name)}</div>
+                            <div class="habit-meta">
+                                <span class="habit-streak-badge">🔥 ${h.streak}</span>
+                                <span class="habit-group-tag">${escapeHtml(h.group||'Sin grupo')}</span>
+                                ${h.bestStreak>0?`<span style="font-size:0.65rem;">🏅${h.bestStreak}</span>`:''}
+                            </div>
+                        </div>
+                        <button class="habit-timer-btn" data-action="timer" title="Temporizador">⏱️</button>
+                        <button class="habit-delete" data-action="delete" title="Eliminar">✕</button>
+                    </div>`;
+                }).join('');
+
+                // Bind events
+                container.querySelectorAll('.habit-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const action = e.target.dataset.action;
+                        const id = card.dataset.id;
+                        if (action === 'toggle' || !action) {
+                            toggleHabit(id);
+                        } else if (action === 'timer') {
+                            openTimer(id);
+                        } else if (action === 'delete') {
+                            if (confirm('¿Eliminar este hábito?')) deleteHabit(id);
+                        }
+                    });
+                });
+            }
+
+            function renderStats() {
+                const today = getToday();
+                let todayCount = 0;
+                let totalCompletions = 0;
+                let bestStreak = 0;
+                appData.habits.forEach(h => {
+                    if (h.completedDates && h.completedDates.includes(today)) todayCount++;
+                    totalCompletions += (h.completedDates || []).length;
+                    if (h.bestStreak > bestStreak) bestStreak = h.bestStreak;
+                });
+                document.getElementById('statStreak').textContent = bestStreak;
+                document.getElementById('statToday').textContent = todayCount;
+                document.getElementById('statTotal').textContent = appData.habits.length;
+                document.getElementById('statCompletions').textContent = totalCompletions;
+            }
+
+            function renderAchievements() {
+                const container = document.getElementById('achievementsList');
+                container.innerHTML = achievementDefs.map(def => {
+                    const unlocked = !!appData.achievements[def.id];
+                    return `
+                    <div class="achievement-card${unlocked?' unlocked':''}">
+                        <div class="achievement-icon">${def.icon}</div>
+                        <div class="achievement-info">
+                            <h4>${def.name} ${unlocked?'✅':''}</h4>
+                            <p>${def.desc}</p>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            function renderGroupsList() {
+                const container = document.getElementById('groupsList');
+                const allGroups = [...new Set([...appData.groups, ...appData.habits.map(h => h.group)].filter(
+                Boolean))];
+                container.innerHTML = allGroups.map(g => `
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
+                        <span>📁 ${escapeHtml(g)}</span>
+                        <span style="font-size:0.7rem;color:var(--text-secondary);">${appData.habits.filter(h=>h.group===g).length} hábitos</span>
+                    </div>
+                `).join('');
+            }
+
+            function updateGroupSelect() {
+                const select = document.getElementById('habitGroupSelect');
+                const allGroups = [...new Set([...appData.groups, ...appData.habits.map(h => h.group)].filter(
+                Boolean))];
+                select.innerHTML = allGroups.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join(
+                    '') + '<option value="">Sin grupo</option>';
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ── Timer ──
+            function openTimer(habitId) {
+                timerHabitId = habitId;
+                const habit = appData.habits.find(h => h.id === habitId);
+                document.getElementById('timerHabitName').textContent = habit ? habit.name : '';
+                timerSeconds = 300;
+                timerRunning = false;
+                clearInterval(timerInterval);
+                updateTimerDisplay();
+                document.getElementById('timerSlider').value = 5;
+                document.getElementById('timerModal').classList.remove('hidden');
+            }
+
+            function updateTimerDisplay() {
+                const m = Math.floor(timerSeconds / 60);
+                const s = timerSeconds % 60;
+                document.getElementById('timerDisplay').textContent =
+                    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            }
+
+            function closeTimer() {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                document.getElementById('timerModal').classList.add('hidden');
+            }
+
+            document.getElementById('btnTimerStart').addEventListener('click', () => {
+                if (timerRunning) return;
+                timerRunning = true;
+                timerInterval = setInterval(() => {
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        timerRunning = false;
+                        if (timerHabitId) {
+                            const habit = appData.habits.find(h => h.id === timerHabitId);
+                            if (habit && !isCompletedToday(habit)) {
+                                toggleHabit(timerHabitId);
+                            }
+                        }
+                        showToast('⏰ ¡Tiempo completado! Hábito registrado.');
+                        closeTimer();
+                        return;
+                    }
+                    timerSeconds--;
+                    updateTimerDisplay();
+                }, 1000);
+            });
+            document.getElementById('btnTimerPause').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                timerRunning = false;
+            });
+            document.getElementById('btnTimerReset').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                timerSeconds = parseInt(document.getElementById('timerSlider').value) * 60;
+                updateTimerDisplay();
+            });
+            document.getElementById('btnTimerClose').addEventListener('click', closeTimer);
+            document.getElementById('timerSlider').addEventListener('input', function() {
+                if (!timerRunning) {
+                    timerSeconds = parseInt(this.value) * 60;
+                    updateTimerDisplay();
                 }
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-        fadeElements.forEach(el => observer.observe(el));
-
-        // ── Smooth scroll for CTA buttons ──
-        document.querySelectorAll('.btn-primary, .btn-download-sm').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Scroll to top with smooth animation
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                // Pulse effect
-                btn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    btn.style.transform = '';
-                }, 150);
-                // Show a little toast-like feedback
-                showToast('🎉 ¡Gracias por tu interés en Grit!');
-            });
-        });
-
-        document.querySelector('.btn-secondary')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // ── Simple toast ──
-        function showToast(message) {
-            const existing = document.querySelector('.grit-toast');
-            if (existing) existing.remove();
-
-            const toast = document.createElement('div');
-            toast.className = 'grit-toast';
-            toast.textContent = message;
-            toast.style.cssText = `
-                        position: fixed;
-                        bottom: 30px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        background: var(--bg-card);
-                        color: var(--text);
-                        border: 1px solid var(--border);
-                        padding: 14px 28px;
-                        border-radius: 50px;
-                        font-weight: 600;
-                        font-size: 0.95rem;
-                        z-index: 9999;
-                        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-                        animation: toastIn 0.4s ease, toastOut 0.4s 2.2s ease forwards;
-                        pointer-events: none;
-                        letter-spacing: -0.2px;
-                    `;
-            document.body.appendChild(toast);
-
-            // Add keyframes dynamically if not present
-            if (!document.getElementById('toast-styles')) {
-                const styleTag = document.createElement('style');
-                styleTag.id = 'toast-styles';
-                styleTag.textContent = `
-                            @keyframes toastIn {
-                                from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-                                to { opacity: 1; transform: translateX(-50%) translateY(0); }
-                            }
-                            @keyframes toastOut {
-                                from { opacity: 1; transform: translateX(-50%) translateY(0); }
-                                to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-                            }
-                        `;
-                document.head.appendChild(styleTag);
+            // ── Add Habit Modal ──
+            function openAddHabitModal() {
+                updateGroupSelect();
+                document.getElementById('habitNameInput').value = '';
+                document.getElementById('addHabitModal').classList.remove('hidden');
+                document.getElementById('habitNameInput').focus();
             }
 
-            setTimeout(() => toast.remove(), 2700);
-        }
+            document.getElementById('btnAddHabit').addEventListener('click', openAddHabitModal);
+            document.getElementById('btnCancelHabit').addEventListener('click', () => {
+                document.getElementById('addHabitModal').classList.add('hidden');
+            });
+            document.getElementById('btnSaveHabit').addEventListener('click', () => {
+                const name = document.getElementById('habitNameInput').value.trim();
+                if (!name) {
+                    showToast('⚠️ Ingresa un nombre');
+                    return;
+                }
+                const group = document.getElementById('habitGroupSelect').value;
+                const color = document.getElementById('habitColorSelect').value;
+                addHabit(name, group, color);
+                document.getElementById('addHabitModal').classList.add('hidden');
+                showToast('✅ Hábito creado');
+                checkAchievements();
+            });
+
+            // ── Groups ──
+            document.getElementById('btnCreateGroup').addEventListener('click', () => {
+                const input = document.getElementById('newGroupInput');
+                const name = input.value.trim();
+                if (!name) return;
+                if (!appData.groups.includes(name)) {
+                    appData.groups.push(name);
+                    saveData();
+                    renderAll();
+                    showToast('📁 Grupo creado');
+                }
+                input.value = '';
+            });
+
+            // ── Voice command (simulated Siri Shortcuts) ──
+            document.getElementById('btnVoice').addEventListener('click', () => {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    showToast('🎙️ Tu navegador no soporta comandos de voz');
+                    return;
+                }
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'es-ES';
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+                showToast('🎙️ Escuchando... Di "completar" y el nombre del hábito');
+                recognition.start();
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.toLowerCase();
+                    if (transcript.includes('completar') || transcript.includes('marcar')) {
+                        const habitName = transcript.replace(/completar|marcar|hábito|habito/gi, '').trim();
+                        const habit = appData.habits.find(h => h.name.toLowerCase().includes(habitName));
+                        if (habit) {
+                            if (!isCompletedToday(habit)) toggleHabit(habit.id);
+                            showToast(`✅ Hábito "${habit.name}" completado por voz`);
+                        } else {
+                            showToast('❌ No encontré ese hábito');
+                        }
+                    } else {
+                        showToast('🎙️ Di "completar [nombre del hábito]"');
+                    }
+                };
+                recognition.onerror = () => showToast('❌ Error de voz');
+            });
+
+            // ── Reset ──
+            document.getElementById('btnReset').addEventListener('click', () => {
+                if (confirm('¿Estás seguro? Se eliminarán todos tus hábitos y progreso.')) {
+                    appData = {
+                        habits: [],
+                        groups: ['Bienestar', 'Productividad', 'Salud', 'Ejercicio', 'Aprendizaje'],
+                        achievements: {},
+                        theme: appData.theme,
+                    };
+                    saveData();
+                    renderAll();
+                    showToast('🗑️ Datos reiniciados');
+                }
+            });
+
+            // ── Theme ──
+            function applyTheme() {
+                if (appData.theme === 'light') {
+                    document.body.classList.add('light-mode');
+                    document.getElementById('btnTheme').textContent = '☀️';
+                } else {
+                    document.body.classList.remove('light-mode');
+                    document.getElementById('btnTheme').textContent = '🌙';
+                }
+            }
+            document.getElementById('btnTheme').addEventListener('click', () => {
+                appData.theme = appData.theme === 'dark' ? 'light' : 'dark';
+                saveData();
+                applyTheme();
+            });
+
+            // ── Navigation ──
+            function switchView(viewName) {
+                currentView = viewName;
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                const targetView = document.getElementById(viewName);
+                if (targetView) targetView.classList.add('active');
+                updateNavActive();
+                if (viewName === 'viewStats') renderStats();
+                if (viewName === 'viewSettings') renderGroupsList();
+                document.getElementById('headerTitle').textContent =
+                    viewName === 'viewDashboard' ? '🔥 Grit' :
+                    viewName === 'viewStats' ? '📊 Estadísticas' : '⚙️ Más';
+            }
+
+            function updateNavActive() {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.view === currentView);
+                });
+            }
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => switchView(item.dataset.view));
+            });
+
+            // ── Toast ──
+            function showToast(msg) {
+                const existing = document.querySelector('.toast');
+                if (existing) existing.remove();
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = msg;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2200);
+            }
+
+            // ── Keyboard shortcut for add habit ──
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+                    e.preventDefault();
+                    openAddHabitModal();
+                }
+            });
+
+            // ── Init ──
+            function init() {
+                loadData();
+                applyTheme();
+                // Recalculate all streaks on load
+                appData.habits.forEach(h => {
+                    h.streak = calculateStreak(h);
+                    if (h.streak > (h.bestStreak || 0)) h.bestStreak = h.streak;
+                });
+                checkAchievements();
+                saveData();
+                renderAll();
+                switchView('viewDashboard');
+
+                // Auto-check for day change every minute
+                setInterval(() => {
+                    renderAll();
+                }, 60000);
+
+                // Request notification permission for reminders
+                if ('Notification' in window && Notification.permission === 'default') {
+                    setTimeout(() => {
+                        Notification.requestPermission().then(perm => {
+                            if (perm === 'granted') {
+                                scheduleReminder();
+                            }
+                        });
+                    }, 5000);
+                }
+            }
+
+            function scheduleReminder() {
+                // Schedule a daily reminder at 9 AM
+                const now = new Date();
+                const reminderTime = new Date(now);
+                reminderTime.setHours(9, 0, 0, 0);
+                if (reminderTime <= now) reminderTime.setDate(reminderTime.getDate() + 1);
+                const delay = reminderTime - now;
+                setTimeout(() => {
+                    if (Notification.permission === 'granted') {
+                        new Notification('🔔 Grit - Recordatorio', {
+                            body: '¡No olvides revisar tus hábitos de hoy!',
+                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🔥</text></svg>',
+                        });
+                    }
+                    scheduleReminder(); // Repeat daily
+                }, delay);
+            }
+
+            init();
+        })();
     </script>
 </body>
 </html>
