@@ -95,7 +95,7 @@
        .stepper-col.completed span { color: var(--ink); font-weight: 600; }
        .stepper-line { width: 22px; height: 1.5px; background: var(--ink); margin-top: 13px; flex-shrink: 0; opacity: 0.2; }
        .stepper-line.done { opacity: 1; }
-       .container { max-width: 560px; margin: 0 auto; padding: 0 0 160px; }
+       .container { max-width: 560px; margin: 0 auto; padding: 0 0 220px; } /* Aumentado para evitar solapamiento con barra inferior */
        .product-image-wrap {
             position: relative;
             width: calc(100% - 28px);
@@ -621,57 +621,17 @@
             z-index: 1200;
         }
        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-       .tour-overlay { position: fixed; inset: 0; background: transparent; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-       .tour-overlay.active { background: rgba(17,17,17,0.65); pointer-events: auto; opacity: 1; }
-       .tour-highlight { position: fixed; z-index: 1001; pointer-events: none; transition: all 0.35s ease; border: 1.5px solid var(--bg); }
-       .tour-tooltip { position: fixed; z-index: 1003; background: var(--paper); border: var(--border); padding: 18px 18px; max-width: 320px; width: calc(100vw - 32px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-       .tour-tooltip.active { opacity: 1; pointer-events: auto; }
-       .tour-step-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-       .tour-title { font-family: 'Courier Prime', monospace; font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-       .tour-body { font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--muted); line-height: 1.5; margin-bottom: 14px; text-transform: uppercase; }
-       .tour-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-       .tour-dots { display: flex; gap: 5px; }
-       .tour-dot { width: 6px; height: 6px; border: 1px solid var(--ink); background: transparent; }
-       .tour-dot.active { background: var(--ink); }
-       .tour-btn-skip { background: var(--paper); border: var(--border-thin); padding: 7px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-       .tour-btn-next { background: var(--ink); border: var(--border); color: var(--bg); padding: 7px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-       .promo-guide-overlay,.info-modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.2); z-index: 2100; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-       .promo-guide-overlay.open,.info-modal-overlay.open { opacity: 1; pointer-events: auto; }
-       .promo-guide-modal,.info-modal {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(30px);
-            width: 100%; max-width: 560px;
-            background: var(--paper);
-            border: var(--border);
-            border-bottom: none;
-            padding: 0 0 24px;
-            z-index: 2101;
-            transition: transform 0.3s ease, opacity 0.3s;
+       /* Overlays desactivados por defecto y sin capturar clics */
+       .tour-overlay, .promo-guide-overlay, .info-modal-overlay {
+            pointer-events: none;
             opacity: 0;
-            pointer-events: auto;
-            max-height: 85vh;
-            overflow-y: auto;
-            overscroll-behavior: contain;
         }
-       .promo-guide-overlay.open .promo-guide-modal,
-       .info-modal-overlay.open .info-modal { transform: translateX(-50%) translateY(0); opacity: 1; }
-       .promo-guide-handle { width: 30px; height: 3px; background: var(--ink); margin: 12px auto 0; }
-       .promo-guide-header { padding: 16px 16px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-       .promo-guide-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
-       .promo-guide-title { font-family: 'Courier Prime', monospace; font-size: 1.15rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
-       .promo-guide-close,.info-modal-close { background: var(--paper); border: var(--border); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
-       .promo-guide-steps { padding: 14px 16px 0; display: flex; flex-direction: column; }
-       .promo-guide-step { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: var(--border-thin); }
-       .promo-guide-step:last-child { border-bottom: none; }
-       .promo-guide-step-num { width: 22px; height: 22px; border: var(--border); background: var(--paper); color: var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; }
-       .promo-guide-step-num.gold { background: var(--ink); color: var(--bg); }
-       .promo-guide-step-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
-       .promo-guide-step-desc { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); line-height: 1.4; text-transform: uppercase; }
-       .promo-guide-badge { display: inline-block; background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; margin: 10px 16px 0; }
-       .promo-guide-cta { margin: 14px 16px 0; background: var(--ink); color: var(--bg); border: var(--border); padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; width: calc(100% - 32px); }
-       .info-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 12px; border-bottom: var(--border); background: var(--bg); }
-       .info-modal-title { font-family: 'Courier Prime', monospace; font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-       .info-modal-body { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); line-height: 1.6; padding: 14px 16px; text-transform: uppercase; letter-spacing: 0.3px; }
-       .info-modal-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--bg); background: var(--ink); padding: 3px 7px; margin-bottom: 10px; font-weight: 600; }
+       .tour-overlay.active, .promo-guide-overlay.open, .info-modal-overlay.open {
+            pointer-events: auto;
+            opacity: 1;
+        }
+       .tour-highlight { pointer-events: none; }
+       .tour-tooltip { pointer-events: none; }
        .conc-section-hidden { display: none!important; }
        .divider { height: 1px; background: transparent; margin: 8px 0; }
         @media screen and (-webkit-min-device-pixel-ratio: 0) {
@@ -689,8 +649,8 @@
         </div>
     </div>
     <div class="toast" id="toast"></div>
-    <!-- Tour desactivado: elementos presentes pero sin funcionalidad -->
-    <div class="tour-overlay" id="tour-overlay" onclick="tourSkip()"></div>
+    <!-- Elementos de tour desactivados, sin funcionalidad -->
+    <div class="tour-overlay" id="tour-overlay"></div>
     <div class="tour-highlight" id="tour-highlight"></div>
     <div class="tour-tooltip" id="tour-tooltip">
         <div class="tour-step-label" id="tour-step-label"></div>
@@ -699,8 +659,8 @@
         <div class="tour-footer">
             <div class="tour-dots" id="tour-dots"></div>
             <div class="tour-actions">
-                <button type="button" class="tour-btn-skip" onclick="tourSkip()">Omitir</button>
-                <button type="button" class="tour-btn-next" id="tour-btn-next" onclick="tourNext()">Siguiente →</button>
+                <button type="button" class="tour-btn-skip">Omitir</button>
+                <button type="button" class="tour-btn-next">Siguiente →</button>
             </div>
         </div>
     </div>
@@ -1031,7 +991,6 @@
                 syncOptionFromSelectors();
             }
             if(promoState.active) {
-                // Si hay promo activa y se cambia tamaño, cancelamos para evitar inconsistencias
                 cancelPromo();
                 showToast('Promoción cancelada al cambiar la presentación');
             }
@@ -1131,20 +1090,17 @@
             const currentOpt = state.selectedOption;
             const isExtraPromo = volume === 'extra';
 
-            // Si el volumen no coincide, lo seleccionamos automáticamente en lugar de bloquear
+            // Seleccionar automáticamente el tamaño si no coincide
             if (!isExtraPromo && !['2ml','10ml'].includes(volume) && (!currentOpt || currentOpt.volume !== volume)) {
-                // Seleccionar automáticamente el tamaño correspondiente
                 selectSize(volume);
             } else if (volume === '2ml' && (!currentOpt || currentOpt.volume !== '2ml')) {
                 selectSize('2ml');
             } else if (volume === '10ml' && (!currentOpt || currentOpt.volume !== '10ml')) {
                 selectSize('10ml');
             } else if (isExtraPromo && (!currentOpt || !EXTRA_PRODUCTS.includes(currentOpt.volume))) {
-                // Si no hay extra seleccionado, elegimos 'crema' por defecto
-                selectSize('crema');
+                selectSize('crema'); // Por defecto crema
             }
 
-            // Ahora currentOpt debería ser el adecuado
             const opt = state.selectedOption;
             if (!opt) {
                 showToast('Error: no se pudo seleccionar la presentación');
@@ -1157,18 +1113,13 @@
             else if(volume==='30ml'){ required=6; payFor=5; }
             else if(volume==='10ml'){ required=12; payFor=10; }
             else if(volume==='2ml'){ required=15; payFor=12; }
-            else { // extra
-                required=6; payFor=5;
-            }
+            else { required=6; payFor=5; } // extra
 
-            // Cancelar promo anterior si existe
-            if (promoState.active) {
-                cancelPromo();
-            }
+            if (promoState.active) cancelPromo();
 
             promoState = {
                 active: true,
-                volume: isExtraPromo ? opt.volume : volume, // para extra usamos el volumen seleccionado (crema o deo)
+                volume: isExtraPromo ? opt.volume : volume,
                 required,
                 payFor,
                 basePrice: isExtraPromo ? 129 : opt.price,
@@ -1192,14 +1143,9 @@
             updatePromoUI();
 
             const titles = {
-                '100ml':'Lleva 4, paga 3',
-                '60ml':'Lleva 5, paga 4',
-                '50ml':'Lleva 5, paga 4',
-                '30ml':'Lleva 6, paga 5',
-                '10ml':'Lleva 12, paga 10',
-                '2ml':'Discovery Set · 15×12',
-                'crema':'Lleva 6, paga 5',
-                'deo':'Lleva 6, paga 5'
+                '100ml':'Lleva 4, paga 3','60ml':'Lleva 5, paga 4','50ml':'Lleva 5, paga 4',
+                '30ml':'Lleva 6, paga 5','10ml':'Lleva 12, paga 10','2ml':'Discovery Set · 15×12',
+                'crema':'Lleva 6, paga 5','deo':'Lleva 6, paga 5'
             };
             const guideVolKey = isExtraPromo ? opt.volume : volume;
             const badge = (guideVolKey==='2ml'?'Discovery Set · 2ml':guideVolKey) + ' · ' + opt.concentration;
@@ -1259,15 +1205,9 @@
             const total=(promoState.basePrice*promoState.payFor)+feromonasCost;
             const cartAromas=promoState.selectedAromas.map(item=>({codigo:item.aroma.codigo,nombre:item.aroma.nombre,quantity:item.quantity}));
             state.cartItems.push({
-                type:'promo',
-                volume:promoState.volume,
-                concentration:promoState.concentration,
-                required:promoState.required,
-                payFor:promoState.payFor,
-                aromas:cartAromas,
-                withFeromonas:promoState.withFeromonas,
-                total,
-                isExtra:promoState.isExtra
+                type:'promo', volume:promoState.volume, concentration:promoState.concentration,
+                required:promoState.required, payFor:promoState.payFor, aromas:cartAromas,
+                withFeromonas:promoState.withFeromonas, total, isExtra:promoState.isExtra
             });
             updateCartDrawer();
             cancelPromo();
@@ -1275,8 +1215,7 @@
             setTimeout(()=>openCart(),600);
         }
         function cancelPromo() {
-            promoState.active=false;
-            promoState.selectedAromas=[];
+            promoState.active=false; promoState.selectedAromas=[];
             document.querySelectorAll('.promo-btn').forEach(b=>b.classList.remove('active'));
             document.getElementById('promo-status').classList.remove('visible');
             document.getElementById('finish-promo-wrapper').classList.remove('visible');
@@ -1341,27 +1280,13 @@
             return 0;
         }
         function addToCart() {
-            if(!state.selectedOption||!state.selectedAroma){
-                showToast('⚠️ Selecciona presentación, concentración y aroma');
-                return;
-            }
-            if(promoState.active){
-                showToast('⚠️ Tienes un paquete activo. Complétalo o cancélalo primero');
-                return;
-            }
+            if(!state.selectedOption||!state.selectedAroma){ showToast('⚠️ Selecciona presentación, concentración y aroma'); return; }
+            if(promoState.active){ showToast('⚠️ Tienes un paquete activo. Complétalo o cancélalo primero'); return; }
             const isExtra=EXTRA_PRODUCTS.includes(state.selectedOption.volume);
             const feromonasCost=state.withFeromonas&&!isExtra?60:0;
             const unitPrice=state.selectedOption.price+feromonasCost;
             const total=unitPrice*state.quantity;
-            state.cartItems.push({
-                type:'individual',
-                option:state.selectedOption,
-                aroma:state.selectedAroma,
-                withFeromonas:state.withFeromonas&&!isExtra,
-                quantity:state.quantity,
-                unitPrice,
-                total
-            });
+            state.cartItems.push({ type:'individual', option:state.selectedOption, aroma:state.selectedAroma, withFeromonas:state.withFeromonas&&!isExtra, quantity:state.quantity, unitPrice, total });
             updateCartDrawer();
             showToast('✓ '+state.selectedAroma.nombre+' añadido');
             setTimeout(()=>openCart(),500);
@@ -1412,7 +1337,7 @@
             clearTimeout(toastTimer);
             toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
         }
-        // Tour desactivado (funciones vacías)
+        // Funciones vacías para tour
         function tourStart() {}
         function tourRender() {}
         function tourNext() {}
