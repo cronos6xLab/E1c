@@ -499,7 +499,6 @@
             border-top: var(--border);
             z-index: 195;
             display: flex; align-items: center; gap: 12px;
-            backdrop-filter: none;
         }
       .bottom-bar-preview { flex: 1; min-width: 0; }
       .bottom-bar-label {
@@ -546,7 +545,6 @@
             letter-spacing: 1.5px; text-transform: uppercase;
             cursor: pointer; display: flex; align-items: center; gap: 8px;
             transition: opacity 0.3s ease; opacity: 0; pointer-events: none;
-            box-shadow: none;
         }
       .cart-fab.visible { opacity: 1; pointer-events: auto; }
       .cart-fab-count {
@@ -682,7 +680,8 @@
       .tour-btn-next { background: #111; border: none; border-radius: 8px; padding: 8px 18px; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; color: #fff; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: background 0.2s; }
       .tour-btn-next:hover { background: #333; }
       .tour-btn-next:active,.tour-btn-skip:active { transform: scale(0.97); }
-       /* FIX PRINCIPAL - Modales ya no bloquean clicks */
+
+       /* --- FIX DEFINITIVO MODALES --- */
       .promo-guide-overlay,.info-modal-overlay {
             position: fixed; inset: 0; background: rgba(17,17,17,0.2); z-index: 2100;
             opacity: 0; pointer-events: none; transition: opacity 0.3s;
@@ -700,14 +699,16 @@
             z-index: 2101;
             transition: transform 0.3s ease, opacity 0.3s;
             opacity: 0;
-            pointer-events: none;
+            pointer-events: none; /* no bloquea cuando está cerrado */
             max-height: 85vh;
             overflow-y: auto;
             overscroll-behavior: contain;
         }
+       /* ESTA ES LA LINEA CORREGIDA - con espacio */
       .promo-guide-overlay.open.promo-guide-modal,
       .info-modal-overlay.open.info-modal {
-            transform: translateX(-50%) translateY(0); opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
             pointer-events: auto;
         }
       .promo-guide-handle { width: 30px; height: 3px; background: var(--ink); margin: 12px auto 0; }
