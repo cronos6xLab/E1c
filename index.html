@@ -621,17 +621,185 @@
             z-index: 1200;
         }
        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-       .tour-overlay, .promo-guide-overlay, .info-modal-overlay {
-            pointer-events: none;
-            opacity: 0;
+       /* Estilos del tour copiados del ejemplo */
+       .tour-overlay {
+            position: fixed; inset: 0; background: transparent; z-index: 1000;
+            pointer-events: none; opacity: 0; transition: opacity 0.3s;
         }
-       .tour-overlay.active, .promo-guide-overlay.open, .info-modal-overlay.open {
+       .tour-overlay.active {
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             pointer-events: auto;
             opacity: 1;
         }
-       .tour-highlight { pointer-events: none; }
-       .tour-tooltip { pointer-events: none; }
-       .tour-tooltip.active { pointer-events: auto; }
+       .tour-highlight {
+            position: fixed;
+            border-radius: 12px;
+            z-index: 1001;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(.4,0,.2,1);
+        }
+       .tour-highlight.active {
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.6);
+        }
+       .tour-tooltip {
+            position: fixed;
+            z-index: 1003;
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px 24px;
+            max-width: 320px;
+            width: calc(100vw - 40px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, top 0.35s cubic-bezier(.4,0,.2,1), left 0.35s cubic-bezier(.4,0,.2,1);
+        }
+       .tour-tooltip.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+       .tour-tooltip.arrow-top::before,
+       .tour-tooltip.arrow-bottom::before {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            transform: rotate(45deg);
+        }
+       .tour-tooltip.arrow-top::before {
+            top: -7px;
+            left: 24px;
+        }
+       .tour-tooltip.arrow-bottom::before {
+            bottom: -7px;
+            left: 24px;
+        }
+       .tour-step-label {
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #b8975a;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+       .tour-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #111;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+       .tour-body {
+            font-size: 0.82rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+       .tour-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+       .tour-dots {
+            display: flex;
+            gap: 6px;
+        }
+       .tour-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e0dcd4;
+            transition: background 0.2s;
+        }
+       .tour-dot.active {
+            background: #111;
+        }
+       .tour-btn-skip {
+            background: none;
+            border: 1px solid #ece8e1;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72rem;
+            color: #666;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: border-color 0.2s;
+        }
+       .tour-btn-skip:hover {
+            border-color: #666;
+        }
+       .tour-btn-next {
+            background: #111;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+       .tour-btn-next:hover {
+            background: #333;
+        }
+       .tour-btn-next:active,
+       .tour-btn-skip:active {
+            transform: scale(0.97);
+        }
+        /* Ajustes para el modal de guía de promociones */
+       .promo-guide-overlay, .info-modal-overlay {
+            position: fixed; inset: 0; background: rgba(17,17,17,0.2); z-index: 2100;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+       .promo-guide-overlay.open, .info-modal-overlay.open {
+            opacity: 1; pointer-events: auto;
+        }
+       .promo-guide-modal, .info-modal {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(30px);
+            width: 100%; max-width: 560px;
+            background: var(--paper);
+            border: var(--border);
+            border-bottom: none;
+            padding: 0 0 24px;
+            z-index: 2101;
+            transition: transform 0.3s ease, opacity 0.3s;
+            opacity: 0;
+            pointer-events: auto;
+            max-height: 85vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+       .promo-guide-overlay.open .promo-guide-modal,
+       .info-modal-overlay.open .info-modal {
+            transform: translateX(-50%) translateY(0); opacity: 1;
+        }
+       .promo-guide-handle { width: 30px; height: 3px; background: var(--ink); margin: 12px auto 0; }
+       .promo-guide-header { padding: 16px 16px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+       .promo-guide-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+       .promo-guide-title { font-family: 'Courier Prime', monospace; font-size: 1.15rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
+       .promo-guide-close, .info-modal-close { background: var(--paper); border: var(--border); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
+       .promo-guide-steps { padding: 14px 16px 0; display: flex; flex-direction: column; }
+       .promo-guide-step { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: var(--border-thin); }
+       .promo-guide-step:last-child { border-bottom: none; }
+       .promo-guide-step-num { width: 22px; height: 22px; border: var(--border); background: var(--paper); color: var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; }
+       .promo-guide-step-num.gold { background: var(--ink); color: var(--bg); }
+       .promo-guide-step-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+       .promo-guide-step-desc { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); line-height: 1.4; text-transform: uppercase; }
+       .promo-guide-badge { display: inline-block; background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; margin: 10px 16px 0; }
+       .promo-guide-cta { margin: 14px 16px 0; background: var(--ink); color: var(--bg); border: var(--border); padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; width: calc(100% - 32px); }
+       .info-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 12px; border-bottom: var(--border); background: var(--bg); }
+       .info-modal-title { font-family: 'Courier Prime', monospace; font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+       .info-modal-body { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); line-height: 1.6; padding: 14px 16px; text-transform: uppercase; letter-spacing: 0.3px; }
+       .info-modal-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--bg); background: var(--ink); padding: 3px 7px; margin-bottom: 10px; font-weight: 600; }
        .conc-section-hidden { display: none!important; }
        .divider { height: 1px; background: transparent; margin: 8px 0; }
         @media screen and (-webkit-min-device-pixel-ratio: 0) {
