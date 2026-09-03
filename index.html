@@ -650,7 +650,7 @@
         </div>
     </div>
     <div class="toast" id="toast"></div>
-    <!-- Tour (guía) restaurado -->
+    <!-- Tour (guía) automático restaurado -->
     <div class="tour-overlay" id="tour-overlay" onclick="tourSkip()"></div>
     <div class="tour-highlight" id="tour-highlight"></div>
     <div class="tour-tooltip" id="tour-tooltip">
@@ -693,7 +693,6 @@
     <div class="header">
         <h1>VILLE DU PARFUM</h1>
         <button type="button" class="info-btn unseen" id="info-btn-legal" onclick="openInfoModal('legal')" style="position:absolute; right:16px;">i</button>
-        <button type="button" class="info-btn" id="btn-help-tour" onclick="tourStart()" style="position:absolute; right:50px;" title="Guía de uso">?</button>
     </div>
     <div class="stepper-grid" id="stepper">
         <div class="stepper-col"><div class="stepper-dot" data-step="size">1</div><span>Presentacion</span></div>
@@ -1339,7 +1338,7 @@
             clearTimeout(toastTimer);
             toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
         }
-        // Tour (guía) - funciones restauradas
+        // Tour automático restaurado
         const TOUR_STEPS = [
             { anchor: 'tour-anchor-size', title: 'Elige tu presentación', body: 'Desde 2ml para probar hasta 100ml. También Crema y Desodorante.', arrow: 'arrow-top', position: 'below' },
             { anchor: 'card-conc', title: 'Selecciona la concentración', body: '1 punto = EDT ligera. 4 puntos = Extrait máxima intensidad.', arrow: 'arrow-top', position: 'below' },
@@ -1349,7 +1348,7 @@
         ];
         let tourStep=0, tourActive=false;
         function tourStart() {
-            if (tourActive) return;
+            if (localStorage.getItem('aion_tour_done_v2') === '1') return;
             tourActive = true;
             tourStep = 0;
             tourRender();
@@ -1447,7 +1446,8 @@
             syncOptionFromSelectors();
             updateBottomBar();
             updateStepper();
-            // No iniciar automáticamente el tour
+            // Tour automático al cargar
+            setTimeout(tourStart, 700);
         };
     </script>
 </body>
